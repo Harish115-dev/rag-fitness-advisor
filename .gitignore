@@ -1,17 +1,19 @@
-# Secrets
-.env
+# Vector databases
+chroma db/
+chroma_db/
+vector_store/
 
 # Data
 data/
 virtual_documents/
 
-# Vector DB
-chroma db/
-
 # Python
 __pycache__/
-*.db
-*.sqlite3
-
-# Jupyter
 .ipynb_checkpoints/
+
+# Secrets
+.env
+
+# Binary / DB files
+*.sqlite3
+*.bin
