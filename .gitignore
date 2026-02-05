@@ -1,8 +1,11 @@
+# Secrets
 .env
 
-# Chroma / Vector DB
-chroma/
-chroma_db/
+# Data
+data/
+virtual_documents/
+
+# Vector DB
 chroma db/
 
 # Python
