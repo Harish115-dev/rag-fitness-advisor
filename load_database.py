@@ -12,32 +12,32 @@ emb_nomic=OllamaEmbeddings(
 db= {
     "exercise": Chroma(
         collection_name="exercise",
-        persist_directory="chroma_db/exercise",
+        persist_directory="chroma db/exercise",
         embedding_function=emb_bge
     ),
     "workout": Chroma(
         collection_name="workout",
-        persist_directory="chroma_db/workout",
+        persist_directory="chroma db/workout",
         embedding_function=emb_bge
     ),
     "nutrition": Chroma(
         collection_name="nutrition",
-        persist_directory="chroma_db/nutrition",
+        persist_directory="chroma db/nutrition",
         embedding_function=emb_bge
     ),
     "guidelines": Chroma(
         collection_name="guidelines",
-        persist_directory="chroma_db/guidelines",
+        persist_directory="chroma db/guidelines",
         embedding_function=emb_bge
     ),
     "compendium": Chroma(
         collection_name="compendium",
-        persist_directory="chroma_db/compendium",
+        persist_directory="chroma db/compendium",
         embedding_function=emb_bge
     ),
     "nutrition100g": Chroma(
         collection_name="nutrition100g",
-        persist_directory="chroma_db/nutrition100g",
+        persist_directory="chroma db/nutrition100g",
         embedding_function=emb_nomic
     )
 }

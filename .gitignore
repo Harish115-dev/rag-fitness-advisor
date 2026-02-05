@@ -1,0 +1,15 @@
+.env
+
+# Chroma / Vector DB
+chroma/
+chroma_db/
+chroma db/
+vector_store/
+
+# Python
+__pycache__/
+*.db
+*.sqlite3
+
+# Jupyter
+.ipynb_checkpoints/
