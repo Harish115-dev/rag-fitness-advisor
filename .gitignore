@@ -4,7 +4,6 @@
 chroma/
 chroma_db/
 chroma db/
-vector_store/
 
 # Python
 __pycache__/
