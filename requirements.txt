@@ -1,0 +1,16 @@
+# Backend
+fastapi
+uvicorn
+
+# Core utilities
+pydantic
+python-dotenv
+
+# LangChain ecosystem
+langchain-core
+langchain-chroma
+langchain-ollama
+langchain-groq
+
+# Vector database
+chromadb
