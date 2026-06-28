@@ -1,0 +1,15 @@
+
+
+flask
+python-dotenv
+
+# LangChain core + integrations
+langchain-core
+langchain-chroma
+langchain-huggingface
+
+# HuggingFace client (pulled in by langchain-huggingface, pinned for stability)
+huggingface-hub>=0.23.0
+
+# ChromaDB — uses SQLite under the hood; no extra DB needed
+chromadb>=0.5.0
