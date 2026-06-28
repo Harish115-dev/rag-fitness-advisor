@@ -1,22 +1,29 @@
 import os
 import json
 import csv
+from pathlib import Path
 from langchain_core.documents import Document
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_chroma import Chroma
 from dotenv import load_dotenv
 
-csv_file="data/chunks/clean_food_nutrition_100g.csv"
-file_name="data/chunks/workoutchunks.json"# change according to file 
-documents=[]
+HF_TOKEN = os.environ["HF_TOKEN"]
 
-embeddings=OllamaEmbeddings(
-    model="bge-m3",
-    base_url="http://localhost:11434"
-)
-embeddings2 = OllamaEmbeddings(
-    model="nomic-embed-text",  
-    base_url="http://localhost:11434"
+JSON_FILES = {
+    "workout":    "data/chunks/workoutchunks.json",
+    "exercise":   "data/chunks/exercisechunks.json",
+    "nutrition":  "data/chunks/nutritionchunks.json",
+    "guidelines": "data/chunks/guidelineschunks.json",
+    "compendium": "data/chunks/compendiumchunks.json",
+}
+csv_file="data/chunks/clean_food_nutrition_100g.csv"
+
+documents=[]
+HF_TOKEN = os.environ["HF_TOKEN"]
+ 
+embeddings= HuggingFaceEndpointEmbeddings(
+    model="nomic-ai/nomic-embed-text-v1",
+    huggingfacehub_api_token=HF_TOKEN,
 )
 # for json files
 with open (file_name,"r", encoding="UTF-8") as f:

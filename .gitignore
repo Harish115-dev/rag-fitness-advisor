@@ -1,0 +1,30 @@
+# --- Project Data & Databases ---
+data/chunks/
+chroma db/
+chromadb/
+
+# --- Environment & API Keys ---
+.env
+.env.local
+
+# --- Python Virtual Environments ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- Python System Artifacts ---
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# --- IDEs and Editors ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
