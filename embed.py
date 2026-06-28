@@ -4,10 +4,20 @@ import csv
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
 from dotenv import load_dotenv
+from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 
-HF_TOKEN = os.environ["HF_TOKEN"]
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+class LocalEmbeddings:
+    def embed_documents(self, texts):
+        return model.encode(texts, normalize_embeddings=True).tolist()
+
+    def embed_query(self, text):
+        return model.encode([text], normalize_embeddings=True)[0].tolist()
+
+embeddings = LocalEmbeddings()
 
 JSON_FILES = {
     "workout":    "data/chunks/workoutchunks.json",
@@ -16,34 +26,17 @@ JSON_FILES = {
     "guidelines": "data/chunks/guidelineschunks.json",
     "compendium": "data/chunks/compendiumchunks.json",
 }
-csv_file="data/chunks/clean_food_nutrition_100g.csv"
+csv_file = "data/chunks/clean_food_nutrition_100g.csv"
 
-HF_TOKEN = os.environ["HF_TOKEN"]
- 
-from sentence_transformers import SentenceTransformer
- 
-model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
- 
-# Wrap into a simple class Chroma can use
-documents=[]
-class LocalEmbeddings:
-    def embed_documents(self, texts):
-        return model.encode(texts, normalize_embeddings=True).tolist()
- 
-    def embed_query(self, text):
-        return model.encode([text], normalize_embeddings=True)[0].tolist()
- 
-embeddings = LocalEmbeddings()
-# for json files
 for collection, file_name in JSON_FILES.items():
     if not os.path.exists(file_name):
         print(f"Skipping {file_name} — file not found")
         continue
- 
+
     with open(file_name, "r", encoding="UTF-8") as f:
         chunks = json.load(f)
     print(f"\nLoaded {len(chunks)} chunks from {file_name}")
- 
+
     documents = []
     for chunk in chunks:
         if "text" in chunk:
@@ -54,61 +47,56 @@ for collection, file_name in JSON_FILES.items():
             text = f"Activity: {chunk['activity']}. MET value: {chunk.get('met', 'N/A')}."
         else:
             continue
- 
+
         metadata = {
-            "source":   chunk.get("source"),
-            "type":     chunk.get("doc_type", "unknown"),
-            "page":     chunk.get("page"),
-            "category": chunk.get("category"),
-            "chunk_id": chunk.get("chunk_id"),
+            "source":   str(chunk.get("source") or ""),
+            "type":     str(chunk.get("doc_type") or "unknown"),
+            "page":     str(chunk.get("page") or ""),
+            "category": str(chunk.get("category") or ""),
+            "chunk_id": str(chunk.get("chunk_id") or ""),
         }
- 
-        # compendium chunks
+
         if "activity" in chunk:
             metadata["type"] = "activity"
-            metadata["activity_code"] = chunk.get("activity_code")
-            metadata["met"] = chunk.get("met")
- 
-        # exercise chunks
+            metadata["activity_code"] = str(chunk.get("activity_code") or "")
+            metadata["met"] = str(chunk.get("met") or "")
+
         if "content" in chunk and "Exercise Name" in chunk.get("content", ""):
             metadata["type"] = "exercise"
             if "metadata" in chunk:
-                metadata["level"] = chunk["metadata"].get("level")
-                metadata["equipment"] = chunk["metadata"].get("equipment")
+                metadata["level"] = str(chunk["metadata"].get("level") or "")
+                metadata["equipment"] = str(chunk["metadata"].get("equipment") or "")
                 muscles = chunk["metadata"].get("primary_muscles")
                 metadata["primary_muscles"] = (
-                    ", ".join(muscles) if isinstance(muscles, list) else muscles
+                    ", ".join(muscles) if isinstance(muscles, list) else str(muscles or "")
                 )
- 
+
         documents.append(Document(page_content=text, metadata=metadata))
 
+    
+    db = Chroma(
+        persist_directory=f"chroma db/{collection}",
+        collection_name=collection,
+        embedding_function=embeddings,
+    )
+    BATCH_SIZE = 50
+    total = len(documents)
+    for i in range(0, total, BATCH_SIZE):
+        db.add_documents(documents[i:i + BATCH_SIZE])
+        print(f"  [{collection}] embedded {min(i + BATCH_SIZE, total)}/{total}")
 
-#now embedd 
+    print(f"  [{collection}] total in DB: {db._collection.count()}")
 
-        db = Chroma(
-                    persist_directory=f"chroma db/{collection}",
-                    collection_name=collection,
-                    embedding_function=embeddings,
-                )
-        BATCH_SIZE = 50
-        total = len(documents)
-        for i in range(0, total, BATCH_SIZE):
-                    batch = documents[i:i + BATCH_SIZE]
-                    db.add_documents(batch)
-                    print(f"  [{collection}] embedded {min(i + BATCH_SIZE, total)}/{total}")
-            
-        print(f"  [{collection}] total in DB: {db._collection.count()}")
-            
+
 
 if not os.path.exists(csv_file):
     print(f"\nSkipping {csv_file} — file not found")
 else:
     csv_documents = []
     with open(csv_file, encoding="UTF-8") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
+        rows = list(csv.DictReader(f))
     print(f"\nLoaded {len(rows)} rows from {csv_file}")
- 
+
     for row in rows:
         text = (
             f"Food Name: {row.get('food_name')}. "
@@ -130,11 +118,11 @@ else:
             metadata={
                 "type":      "nutrition_csv",
                 "source":    "clean_food_nutrition_100g.csv",
-                "food_name": row.get("food_name"),
-                "page":      1,
+                "food_name": str(row.get("food_name") or ""),
+                "page":      "1",
             },
         ))
- 
+
     nutrition_db = Chroma(
         persist_directory="chroma db/nutrition100g",
         collection_name="nutrition100g",
@@ -143,28 +131,9 @@ else:
     BATCH_SIZE = 100
     total = len(csv_documents)
     for i in range(0, total, BATCH_SIZE):
-        batch = csv_documents[i:i + BATCH_SIZE]
-        nutrition_db.add_documents(batch)
+        nutrition_db.add_documents(csv_documents[i:i + BATCH_SIZE])
         print(f"  [nutrition100g] embedded {min(i + BATCH_SIZE, total)}/{total}")
- 
+
     print(f"  [nutrition100g] total in DB: {nutrition_db._collection.count()}")
- 
- 
+
 print("\n✓ All done! Your chroma db/ folder is ready.")
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

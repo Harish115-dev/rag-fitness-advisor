@@ -1,5 +1,7 @@
 # --- Project Data & Databases ---
 data/chunks/
+data/raw/
+
 chroma db/
 chromadb/
 
