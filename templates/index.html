@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitForge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="layout">
+
+    <header class="topbar">
+      <div class="logo">
+        <div class="logo-mark">F</div>
+        <span class="logo-text">FitForge</span>
+      </div>
+      <div class="status"><span class="dot"></span>Online</div>
+    </header>
+
+    <div class="chat" id="chat">
+      <div class="welcome">
+        <div class="welcome-emoji">⚡</div>
+        <h1>What do you want to know?</h1>
+        <p>Ask about workouts, nutrition, calories burned, or recovery.</p>
+        <div class="chips">
+          <button class="chip" onclick="fillInput('Best exercises for fat loss?')">Best exercises for fat loss</button>
+          <button class="chip" onclick="fillInput('How much protein do I need daily?')">Daily protein intake</button>
+          <button class="chip" onclick="fillInput('What to eat before a workout?')">Pre-workout meals</button>
+          <button class="chip" onclick="fillInput('Calories burned running 5km?')">Calories burned running</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-wrap">
+      <div class="input-box">
+        <input id="input" type="text" placeholder="Ask FitForge anything…" autocomplete="off" />
+        <button id="send-btn" onclick="send()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <p class="disclaimer">FitForge can make mistakes. Always consult a professional for medical advice.</p>
+    </div>
+
+  </div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
