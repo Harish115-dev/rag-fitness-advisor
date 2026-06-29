@@ -15,10 +15,10 @@ def query_router(query: str):
     if any(w in q for w in ["per 100g", "calories", "protein", "carbs", "fat", "grams"]):
         scores["nutrition100g"] += 3
 
-    if any(w in q for w in ["exercise", "how to", "form", "sit up", "push up", "squat"]):
+    if any(w in q for w in ["exercise", "how to", "form", "sit up", "push up", "squat", "muscle", "beginner"]):
         scores["exercise"] += 2
 
-    if any(w in q for w in ["workout", "routine", "split", "plan"]):
+    if any(w in q for w in ["workout", "routine", "split", "plan", "gym", "build muscle", "tone", "toning", "bulk", "lean", "start gym"]):
         scores["workout"] += 2
 
     if any(w in q for w in ["met", "burn", "calories burned", "energy expenditure"]):

@@ -2,6 +2,7 @@ from search_db import search
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import re
+import difflib
 
 load_dotenv()
 
@@ -9,14 +10,14 @@ client = ChatGroq(
     model="llama-3.1-8b-instant",
     temperature=0.3
 )
-import difflib
 
-GREETINGS = ["hi", "hello", "hey", "yo", "sup", "hii", "hyy","hy"]
+GREETINGS = ["hi", "hello", "hey", "yo", "sup", "hii", "hyy", "hy"]
 
 def is_greeting(q: str) -> bool:
     if not q or len(q.split()) > 3:
         return False
     return any(difflib.SequenceMatcher(None, q, g).ratio() > 0.75 for g in GREETINGS)
+
 
 def answer(query):
     q = re.sub(r"[^a-zA-Z\s]", "", query.lower()).strip()
@@ -33,9 +34,19 @@ def answer(query):
         prompt = f"""
 You are a friendly fitness & diet advisor named FitForge.
 The user said: "{query}"
-This doesn't match any fitness/nutrition topic in your knowledge base.
-Respond briefly and conversationally — do NOT invent fitness facts,
-do NOT use headings or bullet points for small talk, just chat naturally.
+
+This doesn't match a specific topic in your knowledge base yet.
+
+Rules:
+- NEVER ask a clarifying question. Do not ask the user anything.
+- Always give a short, concrete, generically useful starting point
+  related to fitness/nutrition, even if the message is vague.
+- If the message is just small talk or unclear, gently steer toward
+  fitness/nutrition with ONE example suggestion (e.g. "if you're not
+  sure where to start, a simple 3-day full body beginner routine is
+  a great default").
+- Keep it conversational, 2-4 sentences max.
+- Do NOT invent specific numbers/facts, do NOT use headings or bullets.
 """
         response = client.invoke(prompt)
         return response.content
