@@ -30,7 +30,7 @@ def query_router(query: str):
     selected = [k for k, v in scores.items() if v > 0]
 
     if not selected:
-        return ["exercise", "nutrition"]
+        return []
 
     selected.sort(key=lambda x: scores[x], reverse=True)
     return selected
