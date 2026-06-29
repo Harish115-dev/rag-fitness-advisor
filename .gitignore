@@ -2,9 +2,6 @@
 data/chunks/
 data/raw/
 
-chroma db/
-chromadb/
-
 # --- Environment & API Keys ---
 .env
 .env.local
