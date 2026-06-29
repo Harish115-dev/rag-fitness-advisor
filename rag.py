@@ -9,6 +9,14 @@ client = ChatGroq(
     model="llama-3.1-8b-instant",
     temperature=0.3
 )
+import difflib
+
+GREETINGS = ["hi", "hello", "hey", "yo", "sup", "hii", "hyy","hy"]
+
+def is_greeting(q: str) -> bool:
+    if not q or len(q.split()) > 3:
+        return False
+    return any(difflib.SequenceMatcher(None, q, g).ratio() > 0.75 for g in GREETINGS)
 
 def answer(query):
     q = re.sub(r"[^a-zA-Z\s]", "", query.lower()).strip()
