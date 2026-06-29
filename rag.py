@@ -16,10 +16,22 @@ def answer(query):
     if q in ["what is your name", "who are you", "name", "your name"]:
         return "### 👋 Hello!\nMy name is **FitForge** — your AI Fitness & Nutrition Advisor."
 
-    if q in ["hi", "hello", "hey", "hyy", "hii"]:
+    if is_greeting(q):
         return "Hello! 👋 How can I help you with fitness or nutrition today?"
 
     docs = search(query)
+
+    if not docs:
+        prompt = f"""
+You are a friendly fitness & diet advisor named FitForge.
+The user said: "{query}"
+This doesn't match any fitness/nutrition topic in your knowledge base.
+Respond briefly and conversationally — do NOT invent fitness facts,
+do NOT use headings or bullet points for small talk, just chat naturally.
+"""
+        response = client.invoke(prompt)
+        return response.content
+
     context = "\n\n".join([doc.page_content for doc in docs])
 
     prompt = f"""
@@ -40,6 +52,5 @@ Rules for answers:
 Context: {context}
 Question: {query}
 """
-
     response = client.invoke(prompt)
     return response.content
