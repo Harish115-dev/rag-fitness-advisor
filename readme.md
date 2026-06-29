@@ -1,3 +1,12 @@
+---
+title: FitForge
+emoji: ⚡
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
 # FitForge — AI Fitness & Nutrition Advisor
 
 FitForge is an AI-powered RAG (Retrieval-Augmented Generation) chatbot that answers questions about workouts, nutrition, calorie burn, and diet planning. It retrieves context from a curated knowledge base and generates accurate, structured responses using Groq's LLaMA model.
